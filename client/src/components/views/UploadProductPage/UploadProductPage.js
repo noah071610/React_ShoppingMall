@@ -1,5 +1,6 @@
 import { Typography, Button, Form, Input } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import Axios from "axios";
 import React, { useState } from "react";
 import useInput from "../../../hooks/useInput";
 import FileUpload from "../../utils/FileUpload";
@@ -16,12 +17,42 @@ const Continents = [
   { key: 7, value: "Antarctica" },
 ];
 
-function UploadProductPage() {
+function UploadProductPage(props) {
   const [TitleValue, onTitleChange] = useInput("");
   const [DescriptionValue, onDescriptionChange] = useInput("");
   const [PriceValue, onPriceChange] = useInput(0);
   const [ContinentValue, onContinentsSelectChange] = useInput(1);
   const [Images, setImages] = useState([]);
+
+  const updateImages = (newImages) => {
+    setImages(newImages);
+  };
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    if (!TitleValue || !DescriptionValue || !PriceValue || !ContinentValue || !Images) {
+      return alert("fill all the fields first!");
+    }
+
+    const variables = {
+      writer: props.user.userData._id,
+      title: TitleValue,
+      description: DescriptionValue,
+      price: PriceValue,
+      images: Images,
+      continents: ContinentValue,
+    };
+
+    Axios.post("/api/product", variables).then((response) => {
+      if (response.data.success) {
+        alert("Product Successfully Uploaded");
+        props.history.push("/");
+      } else {
+        alert("Failed to upload Product");
+      }
+    });
+  };
 
   return (
     <div style={{ maxWidth: "700px", margin: "2rem auto" }}>
@@ -29,9 +60,9 @@ function UploadProductPage() {
         <Title level={2}> Upload Travel Product</Title>
       </div>
 
-      <Form>
+      <Form onSubmit={submitHandler}>
         {/* DropZone */}
-        <FileUpload />
+        <FileUpload refreshFunction={updateImages} />
         <br />
         <br />
         <label>Title</label>
@@ -55,7 +86,7 @@ function UploadProductPage() {
         </select>
         <br />
         <br />
-        <Button>Submit</Button>
+        <Button htmlType="submit">Submit</Button>
       </Form>
     </div>
   );
