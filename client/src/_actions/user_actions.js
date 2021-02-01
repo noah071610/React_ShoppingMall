@@ -66,9 +66,9 @@ export function getCartItems(cartItems, userCart) {
     .get(`/api/product/products_by_id?id=${cartItems}&type=array`)
     .then((response) => {
       userCart.forEach((cartItem) => {
-        response.data.product.forEach((productDetail, i) => {
+        response.data.forEach((productDetail, i) => {
           if (cartItem.id === productDetail._id) {
-            response.data.product[i].quantity = cartItem.quantity;
+            response.data[i].quantity = cartItem.quantity;
           }
         });
       });
