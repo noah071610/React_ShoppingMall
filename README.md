@@ -1,3 +1,3 @@
 # Clone Coding 
 
-## All of codes are from Lecture 
+All of codes are from Lecture 
